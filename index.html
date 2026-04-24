@@ -739,15 +739,9 @@
             <p class="description">${escapeHtml(project.description || "No description provided.")}</p>
 
             <div class="chips">
-              <span class="chip">${escapeHtml(titleCase(project.project_type || "project"))}</span>
-              ${categories.map((category) => `<span class="chip">${escapeHtml(category)}</span>`).join("")}
             </div>
 
             <div class="hints">
-              <div class="hint-box"><strong>${escapeHtml(titleCase(project.client_side || "unknown"))}</strong><span>Modrinth client-side</span></div>
-              <div class="hint-box"><strong>${escapeHtml(titleCase(project.server_side || "unknown"))}</strong><span>Modrinth server-side</span></div>
-              <div class="hint-box"><strong>${escapeHtml(latest)}</strong><span>Latest version</span></div>
-              <div class="hint-box"><strong>${formatDate(project.updated)}</strong><span>Updated</span></div>
             </div>
           </div>
 
