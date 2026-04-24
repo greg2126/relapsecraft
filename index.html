@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Relapsecraft Mods</title>
-  <meta name="description" content="Mods installed on Relapsecraft." />
+  <title>Minecraft Server Mods</title>
+  <meta name="description" content="A clean static page showing the mods installed on a Minecraft server." />
   <style>
     :root {
       color-scheme: dark;
@@ -368,21 +368,25 @@
     <section class="hero" aria-labelledby="page-title">
       <div class="hero-content">
         <div>
-          <p class="eyebrow">Relapsecraft Mods</p>
-          <h1 id="page-title">Mods installed on Relapsecraft.</h1>
+          <p class="eyebrow">Minecraft Server Mods</p>
+          <h1 id="page-title">Mods installed on our server.</h1>
           <p class="lead" id="serverDescription">
             This page automatically loads the server mod list from a local file, then fetches public project details from Modrinth.
           </p>
         </div>
         <div class="stats" aria-live="polite">
           <div class="stat"><strong id="totalCount">0</strong><span>mods loaded</span></div>
+          <div class="stat"><strong id="downloadCount">0</strong><span>downloads</span></div>
+          <div class="stat"><strong id="followerCount">0</strong><span>followers</span></div>
         </div>
       </div>
     </section>
 
     <div id="message" aria-live="polite"></div>
 
-
+    <section class="notice">
+      <strong>For server owners:</strong> edit <code>mods.json</code> in the same folder as this page. Add one Modrinth URL, slug, or project ID per item. Modrinth project data is cached in each visitor's browser for 24 hours.
+    </section>
 
     <section class="toolbar" aria-label="Filter and sort loaded mods">
       <input id="searchInput" type="search" placeholder="Search server mods..." />
@@ -406,8 +410,8 @@
     // Put mods.json in the same folder as this index.html file.
     // Example mods.json:
     // {
-    //   "serverName": "Relapsecraft",
-    //   "description": "Quality-of-life mods.",
+    //   "serverName": "My Minecraft Server",
+    //   "description": "A friendly survival server with quality-of-life mods.",
     //   "mods": [
     //     "https://modrinth.com/mod/fabric-api",
     //     "https://modrinth.com/mod/sodium",
@@ -416,6 +420,8 @@
     // }
     const MOD_LIST_FILE = "./mods.json";
     const API_BASE = "https://api.modrinth.com/v2";
+    const CACHE_KEY = "minecraft-server-modrinth-project-cache-v1";
+    const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
     const cards = document.querySelector("#cards");
     const message = document.querySelector("#message");
@@ -457,7 +463,7 @@
         }
 
         const slugsOrIds = unique(mods.map(extractSlugOrId).filter(Boolean));
-        const results = await Promise.allSettled(slugsOrIds.map(fetchProject));
+        const results = await Promise.allSettled(slugsOrIds.map(fetchProjectWithCache));
         const projects = [];
         const failures = [];
 
@@ -527,6 +533,23 @@
       }
     }
 
+    async function fetchProjectWithCache(slugOrId) {
+      const cache = readCache();
+      const cached = cache[slugOrId];
+
+      if (cached && Date.now() - cached.savedAt < CACHE_TTL_MS) {
+        return cached.data;
+      }
+
+      const project = await fetchProject(slugOrId);
+      cache[slugOrId] = {
+        savedAt: Date.now(),
+        data: project
+      };
+      writeCache(cache);
+      return project;
+    }
+
     async function fetchProject(slugOrId) {
       let projectResponse;
 
@@ -563,6 +586,22 @@
       }
 
       return { ...project, latestVersion };
+    }
+
+    function readCache() {
+      try {
+        return JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
+      } catch {
+        return {};
+      }
+    }
+
+    function writeCache(cache) {
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+      } catch {
+        // If storage is unavailable or full, the page still works without caching.
+      }
     }
 
     function updateTypeFilter(projects) {
