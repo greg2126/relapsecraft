@@ -560,7 +560,14 @@
         sections.innerHTML = '<div class="empty-state">Loading generated server mod data...</div>';
 
         const config = await fetchModData();
-        const projects = normaliseGeneratedProjects(config).filter((project) => project.install !== "hidden" && project.showToPlayers !== false);
+        const projects = normaliseGeneratedProjects(config)
+  .map((project, index) => ({
+    ...project,
+    install: project.manualInstall || "server-only",
+    note: project.manualNote || null,
+    sortOrder: index
+  }))
+  .filter((project) => project.install !== "hidden");
         generatedAt = config.generatedAt || null;
 
         if (config.serverName) {
