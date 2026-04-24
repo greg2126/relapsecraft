@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Relapsecraft Server Mods</title>
-  <meta name="description" content="" />
+  <meta name="description" content="Minecraft server mod list with clear player install requirements." />
   <style>
     :root {
       color-scheme: dark;
@@ -16,29 +16,29 @@
       --line: rgba(255, 255, 255, 0.16);
       --brand: #1bd96a;
       --brand-2: #6ee7b7;
-      --danger: #fb7185;
+      --required: #fbbf24;
+      --optional: #60a5fa;
+      --server: #a78bfa;
+      --admin: #fb7185;
       --shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
       --radius: 24px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       min-height: 100vh;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at top left, rgba(27, 217, 106, 0.24), transparent 34rem),
-        radial-gradient(circle at top right, rgba(96, 165, 250, 0.20), transparent 32rem),
+        radial-gradient(circle at top left, rgba(27, 217, 106, 0.22), transparent 34rem),
+        radial-gradient(circle at top right, rgba(96, 165, 250, 0.18), transparent 32rem),
         var(--bg);
       color: var(--text);
     }
 
-    a {
-      color: inherit;
-    }
+    a { color: inherit; }
+    code { color: var(--brand-2); }
 
     .page {
       width: min(1180px, calc(100% - 32px));
@@ -49,8 +49,10 @@
     .hero,
     .toolbar,
     .card,
+    .notice,
+    .section-panel,
     .empty-state,
-    .notice {
+    .summary-card {
       border: 1px solid var(--line);
       background: linear-gradient(180deg, var(--panel), rgba(255, 255, 255, 0.045));
       box-shadow: var(--shadow);
@@ -62,16 +64,16 @@
       padding: 38px;
       overflow: hidden;
       position: relative;
-      margin-bottom: 28px;
+      margin-bottom: 22px;
     }
 
     .hero::after {
       content: "";
-      width: 220px;
-      height: 220px;
+      width: 260px;
+      height: 260px;
       position: absolute;
-      right: -70px;
-      bottom: -70px;
+      right: -90px;
+      bottom: -90px;
       border-radius: 999px;
       background: radial-gradient(circle, rgba(27, 217, 106, 0.28), transparent 70%);
       pointer-events: none;
@@ -112,14 +114,13 @@
     }
 
     .stats {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(130px, 1fr));
       gap: 12px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
+      min-width: 300px;
     }
 
     .stat {
-      min-width: 132px;
       border: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.07);
       border-radius: 18px;
@@ -140,22 +141,59 @@
     }
 
     .notice {
-      margin-bottom: 18px;
       padding: 16px 18px;
       color: var(--muted);
       line-height: 1.55;
+      margin-bottom: 18px;
     }
 
-    .notice strong {
-      color: var(--text);
+    .notice strong { color: var(--text); }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 22px 0;
+    }
+
+    .summary-card {
+      padding: 16px;
+      cursor: pointer;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+
+    .summary-card:hover,
+    .summary-card.active {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.34);
+      background: linear-gradient(180deg, var(--panel-strong), rgba(255, 255, 255, 0.06));
+    }
+
+    .summary-card .count {
+      font-size: 2rem;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+    }
+
+    .summary-card .label {
+      margin-top: 8px;
+      font-weight: 850;
+    }
+
+    .summary-card .hint {
+      color: var(--muted);
+      margin-top: 7px;
+      font-size: 0.86rem;
+      line-height: 1.45;
     }
 
     .toolbar {
       padding: 16px;
       display: grid;
-      grid-template-columns: 1fr 190px 190px;
+      grid-template-columns: 1fr 210px 210px;
       gap: 12px;
-      margin: 28px 0;
+      margin: 22px 0 30px;
     }
 
     input,
@@ -176,65 +214,102 @@
       box-shadow: 0 0 0 4px rgba(27, 217, 106, 0.14);
     }
 
-    option {
-      background: #111827;
+    option { background: #111827; }
+
+    .section-panel {
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: start;
+      padding: 22px 22px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: 1.55rem;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    .section-header p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .section-count {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--muted);
+      font-weight: 800;
+      white-space: nowrap;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
+      gap: 16px;
+      padding: 18px;
     }
 
     .card {
-      padding: 18px;
+      padding: 17px;
       min-height: 100%;
       display: flex;
       flex-direction: column;
       position: relative;
       overflow: hidden;
+      box-shadow: none;
     }
 
     .card::before {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(27, 217, 106, 0.10), transparent 42%);
       pointer-events: none;
-      opacity: 0.8;
+      opacity: 0.85;
     }
+
+    .card[data-install="required-client"]::before { background: linear-gradient(135deg, rgba(251, 191, 36, 0.13), transparent 42%); }
+    .card[data-install="optional-client"]::before { background: linear-gradient(135deg, rgba(96, 165, 250, 0.13), transparent 42%); }
+    .card[data-install="server-only"]::before { background: linear-gradient(135deg, rgba(167, 139, 250, 0.13), transparent 42%); }
+    .card[data-install="admin-only"]::before { background: linear-gradient(135deg, rgba(251, 113, 133, 0.13), transparent 42%); }
 
     .card-top,
     .card-body,
-    .card-footer {
-      position: relative;
-      z-index: 1;
-    }
+    .card-footer { position: relative; z-index: 1; }
 
     .card-top {
       display: flex;
-      gap: 14px;
+      gap: 13px;
       align-items: flex-start;
     }
 
     .icon {
-      width: 64px;
-      height: 64px;
+      width: 58px;
+      height: 58px;
       flex: 0 0 auto;
-      border-radius: 18px;
+      border-radius: 17px;
       background: rgba(255, 255, 255, 0.10);
       border: 1px solid var(--line);
       object-fit: cover;
       display: grid;
       place-items: center;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 900;
       color: var(--brand-2);
     }
 
-    .card h2 {
+    .card h3 {
       margin: 0;
-      font-size: 1.25rem;
+      font-size: 1.17rem;
       line-height: 1.15;
       letter-spacing: -0.03em;
     }
@@ -242,77 +317,107 @@
     .slug {
       margin-top: 6px;
       color: var(--muted);
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       word-break: break-word;
     }
 
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 10px;
+      margin-top: 12px;
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .badge.required-client { color: var(--required); background: rgba(251, 191, 36, 0.10); }
+    .badge.optional-client { color: var(--optional); background: rgba(96, 165, 250, 0.10); }
+    .badge.server-only { color: var(--server); background: rgba(167, 139, 250, 0.10); }
+    .badge.admin-only { color: var(--admin); background: rgba(251, 113, 133, 0.10); }
+
+    .note {
+      margin: 13px 0 0;
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 0.94rem;
+    }
+
     .description {
-      margin: 16px 0 0;
+      margin: 10px 0 0;
       color: var(--muted);
-      line-height: 1.58;
+      line-height: 1.55;
+      font-size: 0.92rem;
     }
 
     .chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 16px;
+      gap: 7px;
+      margin-top: 14px;
     }
 
     .chip {
       border: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.08);
       border-radius: 999px;
-      padding: 7px 10px;
+      padding: 6px 9px;
       color: var(--text);
-      font-size: 0.78rem;
-      font-weight: 750;
+      font-size: 0.74rem;
+      font-weight: 800;
       text-transform: capitalize;
     }
 
-    .metrics {
+    .hints {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-top: 16px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+      margin-top: 14px;
     }
 
-    .metric {
-      border-radius: 16px;
+    .hint-box {
+      border-radius: 15px;
       background: rgba(0, 0, 0, 0.22);
       border: 1px solid var(--line);
-      padding: 10px;
+      padding: 9px;
     }
 
-    .metric strong {
+    .hint-box strong {
       display: block;
-      font-size: 1.05rem;
+      font-size: 0.96rem;
     }
 
-    .metric span {
+    .hint-box span {
       display: block;
       color: var(--muted);
-      font-size: 0.76rem;
+      font-size: 0.73rem;
       margin-top: 3px;
     }
 
     .card-footer {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
       margin-top: auto;
-      padding-top: 18px;
+      padding-top: 16px;
     }
 
     .mini-link {
       border: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.09);
       border-radius: 999px;
-      padding: 9px 11px;
+      padding: 8px 10px;
       color: var(--text);
-      font-size: 0.82rem;
-      font-weight: 800;
+      font-size: 0.78rem;
+      font-weight: 850;
       text-decoration: none;
+    }
+
+    .mini-link.primary {
+      background: rgba(27, 217, 106, 0.14);
+      border-color: rgba(27, 217, 106, 0.35);
     }
 
     .empty-state {
@@ -332,34 +437,21 @@
       line-height: 1.55;
     }
 
-    @media (max-width: 920px) {
+    @media (max-width: 980px) {
       .hero-content,
-      .toolbar {
-        grid-template-columns: 1fr;
-      }
-
-      .stats {
-        justify-content: flex-start;
-      }
-
-      .grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .toolbar { grid-template-columns: 1fr; }
+      .stats { min-width: 0; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
-    @media (max-width: 620px) {
-      .page {
-        width: min(100% - 22px, 1180px);
-        padding-top: 22px;
-      }
-
-      .hero {
-        padding: 22px;
-      }
-
-      .grid {
-        grid-template-columns: 1fr;
-      }
+    @media (max-width: 640px) {
+      .page { width: min(100% - 22px, 1180px); padding-top: 22px; }
+      .hero { padding: 22px; }
+      .summary-grid,
+      .grid { grid-template-columns: 1fr; }
+      .section-header { grid-template-columns: 1fr; }
+      .hints { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -368,79 +460,123 @@
     <section class="hero" aria-labelledby="page-title">
       <div class="hero-content">
         <div>
-          <p class="eyebrow">Mods Mods Mods.</p>
-          <h1 id="page-title">Relapsecraft</h1>
+          <p class="eyebrow">Minecraft Server Mods</p>
+          <h1 id="page-title">Relapsecraft mods.</h1>
+          <p class="lead" id="serverDescription">Loading generated mod data...</p>
         </div>
         <div class="stats" aria-live="polite">
-          <div class="stat"><strong id="totalCount">0</strong><span>mods loaded</span></div>
+          <div class="stat"><strong id="totalCount">0</strong><span>visible mods</span></div>
+          <div class="stat"><strong id="requiredCount">0</strong><span>required for players</span></div>
+          <div class="stat"><strong id="serverOnlyCount">0</strong><span>server-side only</span></div>
+          <div class="stat"><strong id="updatedAt">-</strong><span>data generated</span></div>
         </div>
       </div>
     </section>
 
     <div id="message" aria-live="polite"></div>
 
+    <section class="notice">
+      <strong>Player guide:</strong> install anything marked <strong>Required for players</strong>. Mods marked <strong>Server-side only</strong> are already installed on the server and are not needed on your computer. <strong>Optional client mods</strong> are nice-to-have extras.
+    </section>
+
+    <section class="summary-grid" id="summaryGrid" aria-label="Mod install requirement summary"></section>
+
     <section class="toolbar" aria-label="Filter and sort loaded mods">
-      <input id="searchInput" type="search" placeholder="Search server mods..." />
-      <select id="sortSelect" aria-label="Sort mods">
-        <option value="title">Sort by title</option>
-        <option value="downloads">Sort by downloads</option>
-        <option value="followers">Sort by followers</option>
-        <option value="updated">Sort by recently updated</option>
+      <input id="searchInput" type="search" placeholder="Search mods..." />
+      <select id="installSelect" aria-label="Filter install requirement">
+        <option value="all">All install groups</option>
+        <option value="required-client">Required for players</option>
+        <option value="optional-client">Optional client mods</option>
+        <option value="server-only">Server-side only</option>
+        <option value="admin-only">Admin/server utility</option>
       </select>
-      <select id="typeSelect" aria-label="Filter project type">
-        <option value="all">All project types</option>
+      <select id="sortSelect" aria-label="Sort mods">
+        <option value="manual">Sort by my order</option>
+        <option value="title">Sort by title</option>
+        <option value="updated">Sort by recently updated</option>
+        <option value="downloads">Sort by downloads</option>
       </select>
     </section>
 
-    <section id="cards" class="grid" aria-live="polite">
+    <section id="sections" aria-live="polite">
       <div class="empty-state">Loading generated server mod data...</div>
     </section>
   </main>
 
   <script>
-    // Generate this file locally with the generator script before deploying.
-    // Visitors only fetch this local JSON file; they do not call the Modrinth API.
     const MOD_DATA_FILE = "./mods-data.json";
 
-    const cards = document.querySelector("#cards");
+    const GROUPS = [
+      {
+        key: "required-client",
+        label: "Required for players",
+        icon: "✅",
+        hint: "Install these on your computer before joining or to use the server feature properly."
+      },
+      {
+        key: "optional-client",
+        label: "Optional client mods",
+        icon: "✨",
+        hint: "These are nice-to-have extras. You can join without them."
+      },
+      {
+        key: "server-only",
+        label: "Server-side only",
+        icon: "🖥️",
+        hint: "Already installed on Relapsecraft. Players do not need these locally."
+      },
+      {
+        key: "admin-only",
+        label: "Admin/server utility",
+        icon: "🛠️",
+        hint: "Useful for admins or server management, not normal player setup."
+      }
+    ];
+
+    const sections = document.querySelector("#sections");
     const message = document.querySelector("#message");
+    const summaryGrid = document.querySelector("#summaryGrid");
     const searchInput = document.querySelector("#searchInput");
+    const installSelect = document.querySelector("#installSelect");
     const sortSelect = document.querySelector("#sortSelect");
-    const typeSelect = document.querySelector("#typeSelect");
     const totalCount = document.querySelector("#totalCount");
+    const requiredCount = document.querySelector("#requiredCount");
+    const serverOnlyCount = document.querySelector("#serverOnlyCount");
+    const updatedAt = document.querySelector("#updatedAt");
     const serverDescription = document.querySelector("#serverDescription");
     const pageTitle = document.querySelector("#page-title");
 
     let allProjects = [];
+    let generatedAt = null;
 
     document.addEventListener("DOMContentLoaded", loadServerMods);
     searchInput.addEventListener("input", render);
+    installSelect.addEventListener("change", render);
     sortSelect.addEventListener("change", render);
-    typeSelect.addEventListener("change", render);
 
     async function loadServerMods() {
       try {
         showMessage("");
-        cards.innerHTML = '<div class="empty-state">Loading generated server mod data...</div>';
+        sections.innerHTML = '<div class="empty-state">Loading generated server mod data...</div>';
 
         const config = await fetchModData();
-        const projects = normaliseGeneratedProjects(config);
+        const projects = normaliseGeneratedProjects(config).filter((project) => project.install !== "hidden" && project.showToPlayers !== false);
+        generatedAt = config.generatedAt || null;
 
         if (config.serverName) {
-          document.title = `${config.serverName} Mods`;
+          document.title = `${config.serverName} Server Mods`;
           pageTitle.textContent = `${config.serverName} mods.`;
         }
 
-        if (config.description && serverDescription) {
+        if (config.description) {
           serverDescription.textContent = config.description;
         }
 
         if (!projects.length) {
-          throw new Error("mods-data.json loaded, but it does not contain any generated mod data.");
+          throw new Error("mods-data.json loaded, but it does not contain any visible generated mod data.");
         }
 
         allProjects = projects;
-        updateTypeFilter(projects);
         render();
       } catch (error) {
         allProjects = [];
@@ -452,17 +588,14 @@
     async function fetchModData() {
       try {
         const response = await fetch(MOD_DATA_FILE, { cache: "no-store" });
-
         if (!response.ok) {
           throw new Error(`Could not load ${MOD_DATA_FILE}. Make sure mods-data.json is generated and uploaded next to index.html.`);
         }
-
         return response.json();
       } catch (error) {
         if (location.protocol === "file:") {
           throw new Error("Could not load mods-data.json because this page was opened directly from your computer. Test it through a local web server or deploy it to Cloudflare Pages. Do not open index.html with file://.");
         }
-
         throw new Error(`Could not load ${MOD_DATA_FILE}. Check that mods-data.json exists, is valid JSON, and is published in the same folder as index.html. Original error: ${error.message}`);
       }
     }
@@ -474,117 +607,154 @@
       return [];
     }
 
-    function extractSlugOrId(value) {
-      const item = String(value || "").trim();
-      if (!item) return null;
-
-      try {
-        const url = new URL(item);
-        const host = url.hostname.replace(/^www\./, "");
-
-        if (host !== "modrinth.com") {
-          return null;
-        }
-
-        const parts = url.pathname.split("/").filter(Boolean);
-        const typeIndex = parts.findIndex((part) => ["mod", "modpack", "resourcepack", "shader", "plugin", "datapack"].includes(part));
-        return typeIndex >= 0 ? parts[typeIndex + 1] : parts.at(-1);
-      } catch {
-        return item.replace(/^@/, "");
-      }
-    }
-
-    function updateTypeFilter(projects) {
-      const existingValue = typeSelect.value;
-      const types = [...new Set(projects.map((project) => project.project_type).filter(Boolean))].sort();
-
-      typeSelect.innerHTML = '<option value="all">All project types</option>';
-      types.forEach((type) => {
-        const option = document.createElement("option");
-        option.value = type;
-        option.textContent = titleCase(type);
-        typeSelect.appendChild(option);
-      });
-
-      if (types.includes(existingValue)) {
-        typeSelect.value = existingValue;
-      }
-    }
-
     function render() {
       const query = searchInput.value.trim().toLowerCase();
-      const type = typeSelect.value;
+      const selectedInstall = installSelect.value;
       const sort = sortSelect.value;
 
-      const filtered = allProjects
-        .filter((project) => {
-          const haystack = [project.title, project.slug, project.description, ...(project.categories || [])].join(" ").toLowerCase();
-          const matchesSearch = !query || haystack.includes(query);
-          const matchesType = type === "all" || project.project_type === type;
-          return matchesSearch && matchesType;
-        })
-        .sort((a, b) => {
-          if (sort === "downloads") return (b.downloads || 0) - (a.downloads || 0);
-          if (sort === "followers") return (b.followers || 0) - (a.followers || 0);
-          if (sort === "updated") return new Date(b.updated || 0) - new Date(a.updated || 0);
-          return (a.title || "").localeCompare(b.title || "");
-        });
+      const visible = allProjects.filter((project) => {
+        const haystack = [
+          project.title,
+          project.slug,
+          project.description,
+          project.note,
+          project.installLabel,
+          ...(project.categories || []),
+          ...(project.loaders || [])
+        ].join(" ").toLowerCase();
 
+        const matchesSearch = !query || haystack.includes(query);
+        const matchesInstall = selectedInstall === "all" || project.install === selectedInstall;
+        return matchesSearch && matchesInstall;
+      });
+
+      const sorted = sortProjects(visible, sort);
+      updateStats();
+      renderSummary();
+      renderSections(sorted);
+    }
+
+    function sortProjects(projects, sort) {
+      return [...projects].sort((a, b) => {
+        if (sort === "title") return (a.title || "").localeCompare(b.title || "");
+        if (sort === "downloads") return (b.downloads || 0) - (a.downloads || 0);
+        if (sort === "updated") return new Date(b.updated || 0) - new Date(a.updated || 0);
+        return (a.sortOrder ?? 9999) - (b.sortOrder ?? 9999);
+      });
+    }
+
+    function updateStats() {
       totalCount.textContent = allProjects.length.toLocaleString();
+      requiredCount.textContent = countByInstall("required-client").toLocaleString();
+      serverOnlyCount.textContent = countByInstall("server-only").toLocaleString();
+      updatedAt.textContent = generatedAt ? formatDateShort(generatedAt) : "-";
+    }
 
-      if (!filtered.length) {
-        cards.innerHTML = `<div class="empty-state">${allProjects.length ? "No mods match your filters." : "No mods loaded yet."}</div>`;
+    function renderSummary() {
+      summaryGrid.innerHTML = GROUPS.map((group) => {
+        const count = countByInstall(group.key);
+        const active = installSelect.value === group.key ? "active" : "";
+        return `
+          <button class="summary-card ${active}" type="button" data-install-filter="${escapeAttribute(group.key)}">
+            <div class="count">${count}</div>
+            <div class="label">${group.icon} ${escapeHtml(group.label)}</div>
+            <div class="hint">${escapeHtml(group.hint)}</div>
+          </button>
+        `;
+      }).join("");
+
+      document.querySelectorAll("[data-install-filter]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const value = button.getAttribute("data-install-filter");
+          installSelect.value = installSelect.value === value ? "all" : value;
+          render();
+        });
+      });
+    }
+
+    function renderSections(projects) {
+      if (!projects.length) {
+        sections.innerHTML = '<div class="empty-state">No mods match your filters.</div>';
         return;
       }
 
-      cards.innerHTML = filtered.map(projectCard).join("");
+      const html = GROUPS.map((group) => {
+        const groupProjects = projects.filter((project) => project.install === group.key);
+        if (!groupProjects.length) return "";
+
+        return `
+          <section class="section-panel" id="${escapeAttribute(group.key)}">
+            <div class="section-header">
+              <div>
+                <h2>${group.icon} ${escapeHtml(group.label)}</h2>
+                <p>${escapeHtml(group.hint)}</p>
+              </div>
+              <div class="section-count">${groupProjects.length} mod${groupProjects.length === 1 ? "" : "s"}</div>
+            </div>
+            <div class="grid">
+              ${groupProjects.map(projectCard).join("")}
+            </div>
+          </section>
+        `;
+      }).join("");
+
+      sections.innerHTML = html || '<div class="empty-state">No mods match your filters.</div>';
     }
 
     function projectCard(project) {
-      const categories = (project.categories || []).slice(0, 5);
+      const group = GROUPS.find((item) => item.key === project.install) || GROUPS[2];
+      const categories = [...(project.categories || []), ...(project.loaders || [])].slice(0, 5);
       const icon = project.icon_url
         ? `<img class="icon" src="${escapeAttribute(project.icon_url)}" alt="${escapeAttribute(project.title)} icon" loading="lazy">`
         : `<div class="icon" aria-hidden="true">${escapeHtml((project.title || "?").charAt(0))}</div>`;
 
+      const modrinthUrl = `https://modrinth.com/${project.project_type || "mod"}/${project.slug || project.id}`;
+      const latest = project.latestVersion?.version_number || "Unknown";
+      const downloadUrl = project.latestVersion?.downloadUrl;
       const sourceLink = project.source_url ? `<a class="mini-link" href="${escapeAttribute(project.source_url)}" target="_blank" rel="noreferrer">Source</a>` : "";
-      const issuesLink = project.issues_url ? `<a class="mini-link" href="${escapeAttribute(project.issues_url)}" target="_blank" rel="noreferrer">Issues</a>` : "";
       const wikiLink = project.wiki_url ? `<a class="mini-link" href="${escapeAttribute(project.wiki_url)}" target="_blank" rel="noreferrer">Wiki</a>` : "";
-      const latest = project.latestVersion?.version_number ? project.latestVersion.version_number : "Unknown";
+      const downloadLink = downloadUrl ? `<a class="mini-link primary" href="${escapeAttribute(downloadUrl)}" target="_blank" rel="noreferrer">Download jar</a>` : "";
 
       return `
-        <article class="card">
+        <article class="card" data-install="${escapeAttribute(project.install || "server-only")}">
           <div class="card-top">
             ${icon}
             <div>
-              <h2>${escapeHtml(project.title || "Untitled project")}</h2>
+              <h3>${escapeHtml(project.title || "Untitled project")}</h3>
               <div class="slug">${escapeHtml(project.slug || project.id || "")}</div>
+              <span class="badge ${escapeAttribute(project.install || "server-only")}">${group.icon} ${escapeHtml(project.installLabel || group.label)}</span>
             </div>
           </div>
 
           <div class="card-body">
+            ${project.note ? `<p class="note">${escapeHtml(project.note)}</p>` : ""}
             <p class="description">${escapeHtml(project.description || "No description provided.")}</p>
+
             <div class="chips">
               <span class="chip">${escapeHtml(titleCase(project.project_type || "project"))}</span>
-              <span class="chip">Client: ${escapeHtml(project.client_side || "unknown")}</span>
-              <span class="chip">Server: ${escapeHtml(project.server_side || "unknown")}</span>
               ${categories.map((category) => `<span class="chip">${escapeHtml(category)}</span>`).join("")}
             </div>
-            <div class="metrics">
-              <div class="metric"><strong>${formatNumber(project.downloads)}</strong><span>Downloads</span></div>
-              <div class="metric"><strong>${formatNumber(project.followers)}</strong><span>Followers</span></div>
-              <div class="metric"><strong>${escapeHtml(latest)}</strong><span>Latest version</span></div>
-              <div class="metric"><strong>${formatDate(project.updated)}</strong><span>Updated</span></div>
+
+            <div class="hints">
+              <div class="hint-box"><strong>${escapeHtml(titleCase(project.client_side || "unknown"))}</strong><span>Modrinth client-side</span></div>
+              <div class="hint-box"><strong>${escapeHtml(titleCase(project.server_side || "unknown"))}</strong><span>Modrinth server-side</span></div>
+              <div class="hint-box"><strong>${escapeHtml(latest)}</strong><span>Latest version</span></div>
+              <div class="hint-box"><strong>${formatDate(project.updated)}</strong><span>Updated</span></div>
             </div>
           </div>
 
           <div class="card-footer">
-            <a class="mini-link" href="https://modrinth.com/${escapeAttribute(project.project_type || "mod")}/${escapeAttribute(project.slug || project.id)}" target="_blank" rel="noreferrer">View on Modrinth</a>
+            <a class="mini-link" href="${escapeAttribute(modrinthUrl)}" target="_blank" rel="noreferrer">View on Modrinth</a>
+            ${downloadLink}
             ${sourceLink}
-            ${issuesLink}
             ${wikiLink}
           </div>
         </article>
       `;
+    }
+
+    function countByInstall(install) {
+      return allProjects.filter((project) => project.install === install).length;
     }
 
     function showMessage(text, isError = false) {
@@ -595,21 +765,14 @@
       message.innerHTML = `<div class="${isError ? "error-message" : "notice"}">${escapeHtml(text)}</div>`;
     }
 
-    function unique(items) {
-      return [...new Set(items)];
-    }
-
-    function sum(items, field) {
-      return items.reduce((total, item) => total + (Number(item[field]) || 0), 0);
-    }
-
-    function formatNumber(value) {
-      return Number(value || 0).toLocaleString();
-    }
-
     function formatDate(value) {
       if (!value) return "Unknown";
       return new Intl.DateTimeFormat(undefined, { year: "numeric", month: "short", day: "numeric" }).format(new Date(value));
+    }
+
+    function formatDateShort(value) {
+      if (!value) return "-";
+      return new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(new Date(value));
     }
 
     function titleCase(value) {
