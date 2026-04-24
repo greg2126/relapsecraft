@@ -408,8 +408,6 @@
     const sortSelect = document.querySelector("#sortSelect");
     const typeSelect = document.querySelector("#typeSelect");
     const totalCount = document.querySelector("#totalCount");
-    const downloadCount = document.querySelector("#downloadCount");
-    const followerCount = document.querySelector("#followerCount");
     const serverDescription = document.querySelector("#serverDescription");
     const pageTitle = document.querySelector("#page-title");
 
@@ -433,7 +431,7 @@
           pageTitle.textContent = `${config.serverName} mods.`;
         }
 
-        if (config.description) {
+        if (config.description && serverDescription) {
           serverDescription.textContent = config.description;
         }
 
@@ -496,7 +494,7 @@
       }
     }
 
-    function updateTy
+    function updateTypeFilter(projects) {
       const existingValue = typeSelect.value;
       const types = [...new Set(projects.map((project) => project.project_type).filter(Boolean))].sort();
 
@@ -533,8 +531,6 @@
         });
 
       totalCount.textContent = allProjects.length.toLocaleString();
-      downloadCount.textContent = sum(allProjects, "downloads").toLocaleString();
-      followerCount.textContent = sum(allProjects, "followers").toLocaleString();
 
       if (!filtered.length) {
         cards.innerHTML = `<div class="empty-state">${allProjects.length ? "No mods match your filters." : "No mods loaded yet."}</div>`;
