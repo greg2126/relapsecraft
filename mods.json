@@ -1,0 +1,11 @@
+{
+  "serverName": "Relapse Craft",
+  "description": "Now with less reliability",
+  "mods": [
+    "https://modrinth.com/mod/fabric-api",
+    "https://modrinth.com/mod/sodium",
+    "https://modrinth.com/mod/iris",
+    "https://modrinth.com/mod/lithium",
+    "modmenu"
+  ]
+}

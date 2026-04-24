@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Minecraft Server Mods</title>
+  <meta name="description" content="A clean static page showing the mods installed on a Minecraft server." />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1020;
+      --panel: rgba(255, 255, 255, 0.08);
+      --panel-strong: rgba(255, 255, 255, 0.12);
+      --text: #eef4ff;
+      --muted: #aab8d6;
+      --line: rgba(255, 255, 255, 0.16);
+      --brand: #1bd96a;
+      --brand-2: #6ee7b7;
+      --danger: #fb7185;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(27, 217, 106, 0.24), transparent 34rem),
+        radial-gradient(circle at top right, rgba(96, 165, 250, 0.20), transparent 32rem),
+        var(--bg);
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 56px;
+    }
+
+    .hero,
+    .toolbar,
+    .card,
+    .empty-state,
+    .notice {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, var(--panel), rgba(255, 255, 255, 0.045));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      border-radius: var(--radius);
+    }
+
+    .hero {
+      padding: 38px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 28px;
+    }
+
+    .hero::after {
+      content: "";
+      width: 220px;
+      height: 220px;
+      position: absolute;
+      right: -70px;
+      bottom: -70px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(27, 217, 106, 0.28), transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: end;
+    }
+
+    .eyebrow {
+      color: var(--brand-2);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin: 0 0 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.45rem, 6vw, 5rem);
+      line-height: 0.94;
+      letter-spacing: -0.065em;
+      max-width: 850px;
+    }
+
+    .lead {
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 760px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .stat {
+      min-width: 132px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 18px;
+      padding: 14px 16px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .notice {
+      margin-bottom: 18px;
+      padding: 16px 18px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .notice strong {
+      color: var(--text);
+    }
+
+    .toolbar {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr 190px 190px;
+      gap: 12px;
+      margin: 28px 0;
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.26);
+      color: var(--text);
+      padding: 12px 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: rgba(27, 217, 106, 0.72);
+      box-shadow: 0 0 0 4px rgba(27, 217, 106, 0.14);
+    }
+
+    option {
+      background: #111827;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      padding: 18px;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(27, 217, 106, 0.10), transparent 42%);
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    .card-top,
+    .card-body,
+    .card-footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-top {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .icon {
+      width: 64px;
+      height: 64px;
+      flex: 0 0 auto;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid var(--line);
+      object-fit: cover;
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--brand-2);
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+
+    .slug {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      word-break: break-word;
+    }
+
+    .description {
+      margin: 16px 0 0;
+      color: var(--muted);
+      line-height: 1.58;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: var(--text);
+      font-size: 0.78rem;
+      font-weight: 750;
+      text-transform: capitalize;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .metric {
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.22);
+      border: 1px solid var(--line);
+      padding: 10px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 1.05rem;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.76rem;
+      margin-top: 3px;
+    }
+
+    .card-footer {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: auto;
+      padding-top: 18px;
+    }
+
+    .mini-link {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.09);
+      border-radius: 999px;
+      padding: 9px 11px;
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .empty-state {
+      padding: 34px;
+      text-align: center;
+      color: var(--muted);
+      grid-column: 1 / -1;
+    }
+
+    .error-message {
+      color: #fecdd3;
+      background: rgba(251, 113, 133, 0.12);
+      border: 1px solid rgba(251, 113, 133, 0.32);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 920px) {
+      .hero-content,
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        justify-content: flex-start;
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 22px, 1180px);
+        padding-top: 22px;
+      }
+
+      .hero {
+        padding: 22px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-content">
+        <div>
+          <p class="eyebrow">Minecraft Server Mods</p>
+          <h1 id="page-title">Mods installed on our server.</h1>
+          <p class="lead" id="serverDescription">
+            This page automatically loads the server mod list from a local file, then fetches public project details from Modrinth.
+          </p>
+        </div>
+        <div class="stats" aria-live="polite">
+          <div class="stat"><strong id="totalCount">0</strong><span>mods loaded</span></div>
+          <div class="stat"><strong id="downloadCount">0</strong><span>downloads</span></div>
+          <div class="stat"><strong id="followerCount">0</strong><span>followers</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div id="message" aria-live="polite"></div>
+
+    <section class="notice">
+      <strong>For server owners:</strong> edit <code>mods.json</code> in the same folder as this page. Add one Modrinth URL, slug, or project ID per item.
+    </section>
+
+    <section class="toolbar" aria-label="Filter and sort loaded mods">
+      <input id="searchInput" type="search" placeholder="Search server mods..." />
+      <select id="sortSelect" aria-label="Sort mods">
+        <option value="title">Sort by title</option>
+        <option value="downloads">Sort by downloads</option>
+        <option value="followers">Sort by followers</option>
+        <option value="updated">Sort by recently updated</option>
+      </select>
+      <select id="typeSelect" aria-label="Filter project type">
+        <option value="all">All project types</option>
+      </select>
+    </section>
+
+    <section id="cards" class="grid" aria-live="polite">
+      <div class="empty-state">Loading server mod list...</div>
+    </section>
+  </main>
+
+  <script>
+    // Put mods.json in the same folder as this index.html file.
+    // Example mods.json:
+    // {
+    //   "serverName": "My Minecraft Server",
+    //   "description": "A friendly survival server with quality-of-life mods.",
+    //   "mods": [
+    //     "https://modrinth.com/mod/fabric-api",
+    //     "https://modrinth.com/mod/sodium",
+    //     "iris"
+    //   ]
+    // }
+    const MOD_LIST_FILE = "./mods.json";
+    const API_BASE = "https://api.modrinth.com/v2";
+
+    const cards = document.querySelector("#cards");
+    const message = document.querySelector("#message");
+    const searchInput = document.querySelector("#searchInput");
+    const sortSelect = document.querySelector("#sortSelect");
+    const typeSelect = document.querySelector("#typeSelect");
+    const totalCount = document.querySelector("#totalCount");
+    const downloadCount = document.querySelector("#downloadCount");
+    const followerCount = document.querySelector("#followerCount");
+    const serverDescription = document.querySelector("#serverDescription");
+    const pageTitle = document.querySelector("#page-title");
+
+    let allProjects = [];
+
+    document.addEventListener("DOMContentLoaded", loadServerMods);
+    searchInput.addEventListener("input", render);
+    sortSelect.addEventListener("change", render);
+    typeSelect.addEventListener("change", render);
+
+    async function loadServerMods() {
+      try {
+        showMessage("");
+        cards.innerHTML = '<div class="empty-state">Loading server mod list...</div>';
+
+        const config = await fetchModListConfig();
+        const mods = normaliseModList(config);
+
+        if (config.serverName) {
+          document.title = `${config.serverName} Mods`;
+          pageTitle.textContent = `${config.serverName} mods.`;
+        }
+
+        if (config.description) {
+          serverDescription.textContent = config.description;
+        }
+
+        if (!mods.length) {
+          throw new Error("mods.json loaded, but it does not contain any mods.");
+        }
+
+        const slugsOrIds = unique(mods.map(extractSlugOrId).filter(Boolean));
+        const results = await Promise.allSettled(slugsOrIds.map(fetchProject));
+        const projects = [];
+        const failures = [];
+
+        results.forEach((result, index) => {
+          if (result.status === "fulfilled") {
+            projects.push(result.value);
+          } else {
+            failures.push(`${slugsOrIds[index]}: ${result.reason.message}`);
+          }
+        });
+
+        allProjects = projects;
+        updateTypeFilter(projects);
+        render();
+
+        if (failures.length) {
+          showMessage(`Loaded ${projects.length} project(s). Could not load ${failures.length}: ${failures.join("; ")}`, true);
+        }
+      } catch (error) {
+        allProjects = [];
+        render();
+        showMessage(error.message, true);
+      }
+    }
+
+    async function fetchModListConfig() {
+      try {
+        const response = await fetch(MOD_LIST_FILE, { cache: "no-store" });
+
+        if (!response.ok) {
+          throw new Error(`Could not load ${MOD_LIST_FILE}. Make sure mods.json is uploaded next to index.html.`);
+        }
+
+        return response.json();
+      } catch (error) {
+        if (location.protocol === "file:") {
+          throw new Error("Could not load mods.json because this page was opened directly from your computer. Test it through a local web server or deploy it to Cloudflare Pages. Do not open index.html with file://.");
+        }
+
+        throw new Error(`Could not load ${MOD_LIST_FILE}. Check that mods.json exists, is valid JSON, and is published in the same folder as index.html. Original error: ${error.message}`);
+      }
+    }
+
+    function normaliseModList(config) {
+      if (Array.isArray(config)) return config;
+      if (Array.isArray(config.mods)) return config.mods;
+      return [];
+    }
+
+    function extractSlugOrId(value) {
+      const item = String(value || "").trim();
+      if (!item) return null;
+
+      try {
+        const url = new URL(item);
+        const host = url.hostname.replace(/^www\./, "");
+
+        if (host !== "modrinth.com") {
+          return null;
+        }
+
+        const parts = url.pathname.split("/").filter(Boolean);
+        const typeIndex = parts.findIndex((part) => ["mod", "modpack", "resourcepack", "shader", "plugin", "datapack"].includes(part));
+        return typeIndex >= 0 ? parts[typeIndex + 1] : parts.at(-1);
+      } catch {
+        return item.replace(/^@/, "");
+      }
+    }
+
+    async function fetchProject(slugOrId) {
+      let projectResponse;
+
+      try {
+        projectResponse = await fetch(`${API_BASE}/project/${encodeURIComponent(slugOrId)}`, {
+          headers: {
+            "Accept": "application/json"
+          }
+        });
+      } catch (error) {
+        throw new Error(`network error while contacting Modrinth. This can happen if the visitor is offline, a browser extension blocks the request, or the Modrinth API is unreachable. Original error: ${error.message}`);
+      }
+
+      if (!projectResponse.ok) {
+        throw new Error(projectResponse.status === 404 ? "not found" : `HTTP ${projectResponse.status}`);
+      }
+
+      const project = await projectResponse.json();
+
+      let latestVersion = null;
+      try {
+        const versionResponse = await fetch(`${API_BASE}/project/${encodeURIComponent(project.slug || slugOrId)}/version?include_changelog=false`, {
+          headers: {
+            "Accept": "application/json"
+          }
+        });
+
+        if (versionResponse.ok) {
+          const versions = await versionResponse.json();
+          latestVersion = versions[0] || null;
+        }
+      } catch {
+        latestVersion = null;
+      }
+
+      return { ...project, latestVersion };
+    }
+
+    function updateTypeFilter(projects) {
+      const existingValue = typeSelect.value;
+      const types = [...new Set(projects.map((project) => project.project_type).filter(Boolean))].sort();
+
+      typeSelect.innerHTML = '<option value="all">All project types</option>';
+      types.forEach((type) => {
+        const option = document.createElement("option");
+        option.value = type;
+        option.textContent = titleCase(type);
+        typeSelect.appendChild(option);
+      });
+
+      if (types.includes(existingValue)) {
+        typeSelect.value = existingValue;
+      }
+    }
+
+    function render() {
+      const query = searchInput.value.trim().toLowerCase();
+      const type = typeSelect.value;
+      const sort = sortSelect.value;
+
+      const filtered = allProjects
+        .filter((project) => {
+          const haystack = [project.title, project.slug, project.description, ...(project.categories || [])].join(" ").toLowerCase();
+          const matchesSearch = !query || haystack.includes(query);
+          const matchesType = type === "all" || project.project_type === type;
+          return matchesSearch && matchesType;
+        })
+        .sort((a, b) => {
+          if (sort === "downloads") return (b.downloads || 0) - (a.downloads || 0);
+          if (sort === "followers") return (b.followers || 0) - (a.followers || 0);
+          if (sort === "updated") return new Date(b.updated || 0) - new Date(a.updated || 0);
+          return (a.title || "").localeCompare(b.title || "");
+        });
+
+      totalCount.textContent = allProjects.length.toLocaleString();
+      downloadCount.textContent = sum(allProjects, "downloads").toLocaleString();
+      followerCount.textContent = sum(allProjects, "followers").toLocaleString();
+
+      if (!filtered.length) {
+        cards.innerHTML = `<div class="empty-state">${allProjects.length ? "No mods match your filters." : "No mods loaded yet."}</div>`;
+        return;
+      }
+
+      cards.innerHTML = filtered.map(projectCard).join("");
+    }
+
+    function projectCard(project) {
+      const categories = (project.categories || []).slice(0, 5);
+      const icon = project.icon_url
+        ? `<img class="icon" src="${escapeAttribute(project.icon_url)}" alt="${escapeAttribute(project.title)} icon" loading="lazy">`
+        : `<div class="icon" aria-hidden="true">${escapeHtml((project.title || "?").charAt(0))}</div>`;
+
+      const sourceLink = project.source_url ? `<a class="mini-link" href="${escapeAttribute(project.source_url)}" target="_blank" rel="noreferrer">Source</a>` : "";
+      const issuesLink = project.issues_url ? `<a class="mini-link" href="${escapeAttribute(project.issues_url)}" target="_blank" rel="noreferrer">Issues</a>` : "";
+      const wikiLink = project.wiki_url ? `<a class="mini-link" href="${escapeAttribute(project.wiki_url)}" target="_blank" rel="noreferrer">Wiki</a>` : "";
+      const latest = project.latestVersion?.version_number ? project.latestVersion.version_number : "Unknown";
+
+      return `
+        <article class="card">
+          <div class="card-top">
+            ${icon}
+            <div>
+              <h2>${escapeHtml(project.title || "Untitled project")}</h2>
+              <div class="slug">${escapeHtml(project.slug || project.id || "")}</div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <p class="description">${escapeHtml(project.description || "No description provided.")}</p>
+            <div class="chips">
+              <span class="chip">${escapeHtml(titleCase(project.project_type || "project"))}</span>
+              <span class="chip">Client: ${escapeHtml(project.client_side || "unknown")}</span>
+              <span class="chip">Server: ${escapeHtml(project.server_side || "unknown")}</span>
+              ${categories.map((category) => `<span class="chip">${escapeHtml(category)}</span>`).join("")}
+            </div>
+            <div class="metrics">
+              <div class="metric"><strong>${formatNumber(project.downloads)}</strong><span>Downloads</span></div>
+              <div class="metric"><strong>${formatNumber(project.followers)}</strong><span>Followers</span></div>
+              <div class="metric"><strong>${escapeHtml(latest)}</strong><span>Latest version</span></div>
+              <div class="metric"><strong>${formatDate(project.updated)}</strong><span>Updated</span></div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <a class="mini-link" href="https://modrinth.com/${escapeAttribute(project.project_type || "mod")}/${escapeAttribute(project.slug || project.id)}" target="_blank" rel="noreferrer">View on Modrinth</a>
+            ${sourceLink}
+            ${issuesLink}
+            ${wikiLink}
+          </div>
+        </article>
+      `;
+    }
+
+    function showMessage(text, isError = false) {
+      if (!text) {
+        message.innerHTML = "";
+        return;
+      }
+      message.innerHTML = `<div class="${isError ? "error-message" : "notice"}">${escapeHtml(text)}</div>`;
+    }
+
+    function unique(items) {
+      return [...new Set(items)];
+    }
+
+    function sum(items, field) {
+      return items.reduce((total, item) => total + (Number(item[field]) || 0), 0);
+    }
+
+    function formatNumber(value) {
+      return Number(value || 0).toLocaleString();
+    }
+
+    function formatDate(value) {
+      if (!value) return "Unknown";
+      return new Intl.DateTimeFormat(undefined, { year: "numeric", month: "short", day: "numeric" }).format(new Date(value));
+    }
+
+    function titleCase(value) {
+      return String(value || "")
+        .replace(/[-_]/g, " ")
+        .replace(/\b\w/g, (letter) => letter.toUpperCase());
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escapeAttribute(value) {
+      return escapeHtml(value);
+    }
+  </script>
+</body>
+</html>
