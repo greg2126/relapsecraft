@@ -385,7 +385,7 @@
     <div id="message" aria-live="polite"></div>
 
     <section class="notice">
-      <strong>For server owners:</strong> edit <code>mods.json</code> in the same folder as this page. Add one Modrinth URL, slug, or project ID per item. Modrinth project data is cached in each visitor's browser for 24 hours.
+      <strong>For server owners:</strong> run the local generator script before deploying. This page reads <code>mods-data.json</code> only, so visitors do not call the Modrinth API on page load.
     </section>
 
     <section class="toolbar" aria-label="Filter and sort loaded mods">
@@ -402,26 +402,14 @@
     </section>
 
     <section id="cards" class="grid" aria-live="polite">
-      <div class="empty-state">Loading server mod list...</div>
+      <div class="empty-state">Loading generated server mod data...</div>
     </section>
   </main>
 
   <script>
-    // Put mods.json in the same folder as this index.html file.
-    // Example mods.json:
-    // {
-    //   "serverName": "My Minecraft Server",
-    //   "description": "A friendly survival server with quality-of-life mods.",
-    //   "mods": [
-    //     "https://modrinth.com/mod/fabric-api",
-    //     "https://modrinth.com/mod/sodium",
-    //     "iris"
-    //   ]
-    // }
-    const MOD_LIST_FILE = "./mods.json";
-    const API_BASE = "https://api.modrinth.com/v2";
-    const CACHE_KEY = "minecraft-server-modrinth-project-cache-v1";
-    const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+    // Generate this file locally with the generator script before deploying.
+    // Visitors only fetch this local JSON file; they do not call the Modrinth API.
+    const MOD_DATA_FILE = "./mods-data.json";
 
     const cards = document.querySelector("#cards");
     const message = document.querySelector("#message");
@@ -444,10 +432,10 @@
     async function loadServerMods() {
       try {
         showMessage("");
-        cards.innerHTML = '<div class="empty-state">Loading server mod list...</div>';
+        cards.innerHTML = '<div class="empty-state">Loading generated server mod data...</div>';
 
-        const config = await fetchModListConfig();
-        const mods = normaliseModList(config);
+        const config = await fetchModData();
+        const projects = normaliseGeneratedProjects(config);
 
         if (config.serverName) {
           document.title = `${config.serverName} Mods`;
@@ -458,30 +446,13 @@
           serverDescription.textContent = config.description;
         }
 
-        if (!mods.length) {
-          throw new Error("mods.json loaded, but it does not contain any mods.");
+        if (!projects.length) {
+          throw new Error("mods-data.json loaded, but it does not contain any generated mod data.");
         }
-
-        const slugsOrIds = unique(mods.map(extractSlugOrId).filter(Boolean));
-        const results = await Promise.allSettled(slugsOrIds.map(fetchProjectWithCache));
-        const projects = [];
-        const failures = [];
-
-        results.forEach((result, index) => {
-          if (result.status === "fulfilled") {
-            projects.push(result.value);
-          } else {
-            failures.push(`${slugsOrIds[index]}: ${result.reason.message}`);
-          }
-        });
 
         allProjects = projects;
         updateTypeFilter(projects);
         render();
-
-        if (failures.length) {
-          showMessage(`Loaded ${projects.length} project(s). Could not load ${failures.length}: ${failures.join("; ")}`, true);
-        }
       } catch (error) {
         allProjects = [];
         render();
@@ -489,27 +460,28 @@
       }
     }
 
-    async function fetchModListConfig() {
+    async function fetchModData() {
       try {
-        const response = await fetch(MOD_LIST_FILE, { cache: "no-store" });
+        const response = await fetch(MOD_DATA_FILE, { cache: "no-store" });
 
         if (!response.ok) {
-          throw new Error(`Could not load ${MOD_LIST_FILE}. Make sure mods.json is uploaded next to index.html.`);
+          throw new Error(`Could not load ${MOD_DATA_FILE}. Make sure mods-data.json is generated and uploaded next to index.html.`);
         }
 
         return response.json();
       } catch (error) {
         if (location.protocol === "file:") {
-          throw new Error("Could not load mods.json because this page was opened directly from your computer. Test it through a local web server or deploy it to Cloudflare Pages. Do not open index.html with file://.");
+          throw new Error("Could not load mods-data.json because this page was opened directly from your computer. Test it through a local web server or deploy it to Cloudflare Pages. Do not open index.html with file://.");
         }
 
-        throw new Error(`Could not load ${MOD_LIST_FILE}. Check that mods.json exists, is valid JSON, and is published in the same folder as index.html. Original error: ${error.message}`);
+        throw new Error(`Could not load ${MOD_DATA_FILE}. Check that mods-data.json exists, is valid JSON, and is published in the same folder as index.html. Original error: ${error.message}`);
       }
     }
 
-    function normaliseModList(config) {
+    function normaliseGeneratedProjects(config) {
       if (Array.isArray(config)) return config;
       if (Array.isArray(config.mods)) return config.mods;
+      if (Array.isArray(config.projects)) return config.projects;
       return [];
     }
 
@@ -533,78 +505,7 @@
       }
     }
 
-    async function fetchProjectWithCache(slugOrId) {
-      const cache = readCache();
-      const cached = cache[slugOrId];
-
-      if (cached && Date.now() - cached.savedAt < CACHE_TTL_MS) {
-        return cached.data;
-      }
-
-      const project = await fetchProject(slugOrId);
-      cache[slugOrId] = {
-        savedAt: Date.now(),
-        data: project
-      };
-      writeCache(cache);
-      return project;
-    }
-
-    async function fetchProject(slugOrId) {
-      let projectResponse;
-
-      try {
-        projectResponse = await fetch(`${API_BASE}/project/${encodeURIComponent(slugOrId)}`, {
-          headers: {
-            "Accept": "application/json"
-          }
-        });
-      } catch (error) {
-        throw new Error(`network error while contacting Modrinth. This can happen if the visitor is offline, a browser extension blocks the request, or the Modrinth API is unreachable. Original error: ${error.message}`);
-      }
-
-      if (!projectResponse.ok) {
-        throw new Error(projectResponse.status === 404 ? "not found" : `HTTP ${projectResponse.status}`);
-      }
-
-      const project = await projectResponse.json();
-
-      let latestVersion = null;
-      try {
-        const versionResponse = await fetch(`${API_BASE}/project/${encodeURIComponent(project.slug || slugOrId)}/version?include_changelog=false`, {
-          headers: {
-            "Accept": "application/json"
-          }
-        });
-
-        if (versionResponse.ok) {
-          const versions = await versionResponse.json();
-          latestVersion = versions[0] || null;
-        }
-      } catch {
-        latestVersion = null;
-      }
-
-      return { ...project, latestVersion };
-    }
-
-    function readCache() {
-      try {
-        return JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
-      } catch {
-        return {};
-      }
-    }
-
-    function writeCache(cache) {
-      try {
-        localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-      } catch {
-        // If storage is unavailable or full, the page still works without caching.
-      }
-    }
-
-    function updateTypeFilter(projects) {
+    function updateTy
       const existingValue = typeSelect.value;
       const types = [...new Set(projects.map((project) => project.project_type).filter(Boolean))].sort();
 
