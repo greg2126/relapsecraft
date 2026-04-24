@@ -738,13 +738,6 @@
             ${project.note ? `<p class="note">${escapeHtml(project.note)}</p>` : ""}
             <p class="description">${escapeHtml(project.description || "No description provided.")}</p>
 
-            <div class="chips">
-            </div>
-
-            <div class="hints">
-            </div>
-          </div>
-
           <div class="card-footer">
             <a class="mini-link" href="${escapeAttribute(modrinthUrl)}" target="_blank" rel="noreferrer">View on Modrinth</a>
             ${downloadLink}
