@@ -152,7 +152,7 @@
 
     .summary-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
       margin: 22px 0;
     }
@@ -477,7 +477,7 @@
     <div id="message" aria-live="polite"></div>
 
     <section class="notice">
-      <strong>Player guide:</strong> install anything marked <strong>Required for players</strong>.</br>Mods marked <strong>Server-side only</strong> are already installed on the server and are not needed on your computer.</br><strong>Optional client mods</strong> are nice-to-have extras.
+      <strong>Player guide:</strong> install anything marked <strong>Required for players</strong>. Mods marked <strong>Server-side only</strong> are already installed on the server and are not needed on your computer. <strong>Optional client mods</strong> are nice-to-have extras.
     </section>
 
     <section class="summary-grid" id="summaryGrid" aria-label="Mod install requirement summary"></section>
@@ -489,6 +489,7 @@
         <option value="required-client">Required for players</option>
         <option value="optional-client">Optional client mods</option>
         <option value="server-only">Server-side only</option>
+        <option value="admin-only">Admin/server utility</option>
       </select>
       <select id="sortSelect" aria-label="Sort mods">
         <option value="manual">Sort by my order</option>
@@ -511,19 +512,25 @@
         key: "required-client",
         label: "Required for players",
         icon: "✅",
-        hint: "Must be installed before joining to use the server."
+        hint: "Install these on your computer before joining or to use the server feature properly."
       },
       {
         key: "optional-client",
         label: "Optional client mods",
         icon: "✨",
-        hint: "Some nice-to-have extras."
+        hint: "These are nice-to-have extras. You can join without them."
       },
       {
         key: "server-only",
         label: "Server-side only",
         icon: "🖥️",
-        hint: "Server mods that are not required client side."
+        hint: "Already installed on Relapsecraft. Players do not need these locally."
+      },
+      {
+        key: "admin-only",
+        label: "Admin/server utility",
+        icon: "🛠️",
+        hint: "Useful for admins or server management, not normal player setup."
       }
     ];
 
@@ -730,6 +737,19 @@
           <div class="card-body">
             ${project.note ? `<p class="note">${escapeHtml(project.note)}</p>` : ""}
             <p class="description">${escapeHtml(project.description || "No description provided.")}</p>
+
+            <div class="chips">
+              <span class="chip">${escapeHtml(titleCase(project.project_type || "project"))}</span>
+              ${categories.map((category) => `<span class="chip">${escapeHtml(category)}</span>`).join("")}
+            </div>
+
+            <div class="hints">
+              <div class="hint-box"><strong>${escapeHtml(titleCase(project.client_side || "unknown"))}</strong><span>Modrinth client-side</span></div>
+              <div class="hint-box"><strong>${escapeHtml(titleCase(project.server_side || "unknown"))}</strong><span>Modrinth server-side</span></div>
+              <div class="hint-box"><strong>${escapeHtml(latest)}</strong><span>Latest version</span></div>
+              <div class="hint-box"><strong>${formatDate(project.updated)}</strong><span>Updated</span></div>
+            </div>
+          </div>
 
           <div class="card-footer">
             <a class="mini-link" href="${escapeAttribute(modrinthUrl)}" target="_blank" rel="noreferrer">View on Modrinth</a>

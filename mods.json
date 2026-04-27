@@ -1,0 +1,156 @@
+{"serverName": "Relapsecraft",
+"description": "Now with less reliability",
+"mods": [
+			{
+			   "url": "https://modrinth.com/mod/appleskin",
+			   "install": "optional-client",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/better-than-mending",
+			   "install": "optional-client",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/clumps",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/do-a-barrel-roll",
+			   "install": "optional-client",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/datapack/faster_ghast",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/inventory-totem",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/leaf-me-alone",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/kleeslabs",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/naturally-trimmed",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/quickleafdecay",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/rightclickharvest",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/scaffolding-drops-nearby",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/datapack/superior-stonecutter",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/sessility",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/trade-cycling",
+			   "install": "optional-client",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/trashslot",
+			   "install": "optional-client",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/villager-names-serilum",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/plugin/simple-voice-chat",
+			   "install": "optional-client",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/xaeros-minimap",
+			   "install": "required-client",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/xaeros-world-map",
+			   "install": "optional-client",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/craft-slabs-back-into-blocks?version=1.21.11&loader=fabric",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/simple-voice-chat-radio?version=1.21.11&loader=fabric",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/no-feather-trample?version=1.21.11&loader=fabric",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/ptp?version=1.21.11&loader=fabric",
+			   "install": "optional-client",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/mod/netherportalfix",
+			   "install": "server-only",
+			   "note": ""
+			},
+
+			{
+			   "url": "https://modrinth.com/datapack/veinminer",
+			   "install": "server-only",
+			   "note": ""
+			},
+			{
+			   "url": "https://modrinth.com/datapack/veinminer-enchantment",
+			   "install": "server-only",
+			   "note": ""
+			},
+
+{
+			   "url": "https://modrinth.com/mod/ante",
+			   "install": "server-only",
+			   "note": ""
+			}
+
+
+
+
+
+
+
+
+
+]
+}
