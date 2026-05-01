@@ -142,9 +142,13 @@
 			   "url": "https://modrinth.com/mod/ante",
 			   "install": "server-only",
 			   "note": ""
+			},
+
+{
+			   "url": "https://modrinth.com/mod/easeon-ss-pickupradius?version=1.21.11",
+			   "install": "server-only",
+			   "note": ""
 			}
-
-
 
 
 
