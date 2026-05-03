@@ -148,13 +148,81 @@
 			   "url": "https://modrinth.com/mod/easeon-ss-pickupradius?version=1.21.11",
 			   "install": "server-only",
 			   "note": ""
+			},
+
+{
+			   "url": "https://modrinth.com/datapack/spawn-animations?version=1.21.11&loader=fabric",
+			   "install": "server-only",
+			   "note": ""
+			},
+
+
+
+{
+			   "url": "https://modrinth.com/mod/audaki-cart-engine",
+			   "install": "server-only",
+			   "note": ""
+			},
+
+
+{
+			   "url": "https://modrinth.com/mod/towns-and-towers?version=1.21.11&loader=fabric",
+			   "install": "server-only",
+			   "note": ""
+			},
+
+{
+			   "url": "https://modrinth.com/mod/mes-moogs-end-structures?version=1.21.11&loader=fabric",
+			   "install": "server-only",
+			   "note": ""
+			},
+
+{
+			   "url": "https://modrinth.com/mod/moogs-voyager-structures?version=1.21.11&loader=fabric",
+			   "install": "server-only",
+			   "note": ""
+			},
+
+{
+			   "url": "https://modrinth.com/mod/mns-moogs-nether-structures?version=1.21.11&loader=fabric",
+			   "install": "server-only",
+			   "note": ""
+			},
+{
+			   "url": "https://modrinth.com/mod/mss-moogs-soaring-structures/gallery?version=1.21.11&loader=fabric",
+			   "install": "server-only",
+			   "note": ""
+			},
+
+{
+			   "url": "https://modrinth.com/datapack/hopo-better-ruined-portals?version=1.21.11&loader=fabric",
+			   "install": "server-only",
+			   "note": ""
+			},
+
+
+{
+			   "url": "https://modrinth.com/datapack/dungeons-and-taverns",
+			   "install": "server-only",
+			   "note": ""
+			},
+{
+			   "url": "https://modrinth.com/datapack/structory?version=1.21.11&loader=fabric",
+			   "install": "server-only",
+			   "note": ""
+			},
+{
+			   "url": "https://modrinth.com/datapack/structory-towers",
+			   "install": "server-only",
+			   "note": ""
+			},
+
+{
+			   "url": "https://modrinth.com/datapack/incendium",
+			   "install": "server-only",
+			   "note": ""
 			}
 
 
-
-
-
-
-
-]
+		]
 }
